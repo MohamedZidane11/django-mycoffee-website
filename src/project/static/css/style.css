@@ -74,6 +74,8 @@ body{
 #coffee-nav-item{
   background-color:#5A020Cce;
   border-radius: 25px;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 @media (min-width: 100px) {

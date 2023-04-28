@@ -12,3 +12,7 @@ def index(request):
 def about(request):
     # return HttpResponse("<h2>this is the About page</h2>")
     return render(request, "pages/about.html")
+
+
+def coffee(request):
+    return render(request, "pages/coffee.html")
