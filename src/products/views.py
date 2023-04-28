@@ -7,3 +7,7 @@ def products(request):
 
 def product(request):
     return render(request, "products/product.html")
+
+
+def search(request):
+    return render(request, "products/search.html")
