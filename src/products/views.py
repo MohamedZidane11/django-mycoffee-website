@@ -4,8 +4,41 @@ from .models import Product
 
 # Create your views here.
 def products(request):
+    all_products = Product.objects.all()
+
+    name = None
+    desc = None
+    pfrom = None
+    pto = None
+    cs = None
+
+    if 'cs' in request.GET:
+        cs = request.GET['cs']
+        if not cs:
+            cs = 'off'
+
+    if 'searchname' in request.GET:
+        name = request.GET['searchname']
+        if name:
+            if cs == 'on':
+                all_products = all_products.filter(name__contains=name)
+            else:
+                all_products = all_products.filter(name__icontains=name)
+    if 'searchdesc' in request.GET:
+        desc = request.GET['searchdesc']
+        if desc:
+            if cs == 'on':
+                all_products = all_products.filter(description__contains=desc)
+            else:
+                all_products = all_products.filter(description__icontains=desc)
+    if 'searchpricefrom' in request.GET and 'searchpriceto' in request.GET:
+        pfrom, pto = request.GET['searchpricefrom'], request.GET['searchpriceto']
+        if pfrom and pto:
+            if pfrom.isdigit() and pto.isdigit():
+                all_products = all_products.filter(price__gte=pfrom, price__lte=pto)
+
     context = {
-       'products': Product.objects.all()
+       'products': all_products
     }
     return render(request, "products/products.html", context)
 
