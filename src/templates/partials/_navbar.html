@@ -62,11 +62,11 @@
             Products
             </a>
             <div class="dropdown-menu animate slideIn" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="{% url 'products:product' %}">Caffè Americano</a>
-            <a class="dropdown-item" href="{% url 'products:product' %}">Café Latte</a>
+            <a class="dropdown-item" href="{% url 'products:product' pro_id=1 %}">Caffè Americano</a>
+            <a class="dropdown-item" href="{% url 'products:product' pro_id=2 %}">Café Latte</a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="{% url 'products:product' %}">Cappuccino</a>
-            <a class="dropdown-item" href="{% url 'products:product' %}">Espresso</a>
+            <a class="dropdown-item" href="{% url 'products:product' pro_id=3 %}">Cappuccino</a>
+            <a class="dropdown-item" href="{% url 'products:product' pro_id=4 %}">Espresso</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="{% url 'products:products' %}">All Products</a>
             </div>
