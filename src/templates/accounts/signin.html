@@ -8,8 +8,9 @@
         <hr>
 
 {% if request.user.is_authenticated %}
-        <h4 class="alert alert-warning">Welcome, {{request.user.username}}  &#128548;</h4>
+        <h4 class="alert alert-warning">Welcome, {{request.user.username}}  <span style="font-size:30px">&#128548;</span></h4>
         <h5 class="text-center"> You are now loggged into your profile </h5>
+        <a class="text-dark" href="{% url 'accounts:logout' %}">Logout</a>
 {% else %}
         <form method="POST">
             {% csrf_token %}
@@ -26,7 +27,7 @@
 
             <div class="form-group">
                 <div class="pretty p-svg p-curve p-jelly">
-                    <input type="checkbox" name="rememberme" id="inputTerms" />
+                    <input type="checkbox" checked name="rememberme" id="inputTerms" />
                     <div class="state p-warning">
                         <!-- svg path -->
                         <svg class="svg svg-icon" viewBox="0 0 20 20">
