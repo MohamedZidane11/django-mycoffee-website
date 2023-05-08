@@ -4,56 +4,62 @@
 {% block content %}
 
     <div class="my-form container p-5 my-5 rounded border border-warning">
-        <form method="POST">
-            {% csrf_token %}
-            <h2 class="text-center">Sign Up</h2>
-            <hr>
+        <h2 class="text-center">Sign Up</h2>
+        <hr>
 {% include 'partials/_alerts.html' %}
+
+
+{% if is_added == True %}
+        <form method="POST" style="display:none;">
+{% else %}
+        <form method="POST">
+{% endif %}
+            {% csrf_token %}
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="inputFirstName">First Name</label>
-                    <input type="text" class="form-control" name="fname" id="inputFirstName" required>
+                    <input type="text" class="form-control" name="fname" id="inputFirstName" required value="{{fname}}">
                 </div>
                 <div class="form-group col-md-6">
                     <label for="inputLastName">Last Name</label>
-                    <input type="text" class="form-control" name="lname" id="inputLastName" required>
+                    <input type="text" class="form-control" name="lname" id="inputLastName" required value="{{lname}}">
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="inputAddress">Address</label>
-                <input type="text" class="form-control" name="address1" id="inputAddress" placeholder="1234 Main St" required>
+                <input type="text" class="form-control" name="address1" id="inputAddress" placeholder="1234 Main St" required value="{{address1}}">
             </div>
             <div class="form-group">
                 <label for="inputAddress2">Address 2</label>
-                <input type="text" class="form-control" name="address2" id="inputAddress2" placeholder="Apartment, studio, or floor" required>
+                <input type="text" class="form-control" name="address2" id="inputAddress2" placeholder="Apartment, studio, or floor" required value="{{address2}}">
             </div>
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="inputCity">City</label>
-                    <input type="text" class="form-control" name="city" id="inputCity" required>
+                    <input type="text" class="form-control" name="city" id="inputCity" required value="{{city}}">
                 </div>
                 <div class="form-group col-md-4">
                     <label for="inputZip">State</label>
-                    <input type="text" class="form-control" name="state" id="inputZip" required>
+                    <input type="text" class="form-control" name="state" id="inputZip" required value="{{state}}">
                 </div>
                 <div class="form-group col-md-2">
                     <label for="inputZip">Zip</label>
-                    <input type="text" class="form-control" name="zip" id="inputZip" placeholder="11111" required>
+                    <input type="text" class="form-control" name="zip" id="inputZip" placeholder="11111" required value="{{zip}}">
                 </div>
             </div>
             <div class="form-group">
                 <label for="inputEmail">Email</label>
-                <input type="email" class="form-control" name="email" id="inputEmail" placeholder="name@example.com" required>
+                <input type="email" class="form-control" name="email" id="inputEmail" placeholder="name@example.com" required value="{{email}}">
             </div>
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="inputUsername">Username</label>
-                    <input type="text" class="form-control" name="username" id="inputUsername" placeholder="" required>
+                    <input type="text" class="form-control" name="username" id="inputUsername" placeholder="" required value="{{username}}">
                 </div>
                 <div class="form-group col-md-6">
                     <label for="inputPassword">Password</label>
-                    <input type="password" class="form-control" name="password" id="inputPassword" required>
+                    <input type="password" class="form-control" name="password" id="inputPassword" required value="{{password}}">
                 </div>
             </div>
             <div class="form-group">

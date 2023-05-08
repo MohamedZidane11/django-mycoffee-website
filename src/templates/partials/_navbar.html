@@ -83,6 +83,10 @@
           </li>
 
         </ul>
+
+{% if request.user.is_authenticated %}
+        <span class="text-light" style="margin-right:10px;">Welcome, {{request.user.username}}</span>
+{% endif %}
         <form action="{% url 'products:products' %}" class="form-inline my-2 my-lg-0">
         <input class="form-control mr-sm-2 remove-outline" name="searchname" type="search" placeholder="Search" aria-label="Search">
         <div class="btn-group" role="group">

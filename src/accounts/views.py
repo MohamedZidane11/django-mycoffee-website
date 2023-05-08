@@ -1,13 +1,25 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.contrib import auth
 from .models import userProfile
 import re
 
 # Create your views here.
 def signin(request):
     if request.method == 'POST' and 'btnsignin' in request.POST:
-        messages.info(request, "This is POST and btn")
+
+        username = request.POST['username']
+        password = request.POST['password']
+
+        user = auth.authenticate(username=username, password=password)
+        if user is not None:
+            auth.login(request, user)
+            messages.info(request, "You are logged in")
+        else:
+            messages.error(request, "Your username or password is incorrect")
+
+        #messages.info(request, "This is POST and btn")
         return redirect('accounts:signin')
     else:
         return render(request, "accounts/signin.html")
@@ -28,6 +40,7 @@ def signup(request):
         username = None
         password = None
         terms = None
+        is_added = None
 
         # get values from the form
         if 'fname' in request.POST: fname = request.POST['fname']
@@ -77,8 +90,23 @@ def signup(request):
                                  address2=address2, city=city,
                                  state=state, zip_number=zip_number)
                             userprofile.save()
+
+                            # Clean fields
+                            fname = ''
+                            lname = ''
+                            address1 = ''
+                            address2 = ''
+                            city = ''
+                            state = ''
+                            zip_number = ''
+                            email = ''
+                            username = ''
+                            password = ''
+                            terms = None
+
                             # Success message
                             messages.success(request, 'Your account is created successfully')
+                            is_added = True
                         else:
                             messages.error(request, "Invalid email")
             else:
@@ -86,7 +114,19 @@ def signup(request):
         else:
             messages.error(request, 'Check empty fields')
 
-        return redirect('accounts:signup')
+        return render(request, "accounts/signup.html",{
+            'fname':fname,
+            'lname':lname,
+            'address1':address1,
+            'address2':address2,
+            'city':city,
+            'state':state,
+            'zip': zip_number,
+            'email':email,
+            'username':username,
+            'password':password,
+            'is_added':is_added
+        })
     else:
         return render(request, "accounts/signup.html")
 
