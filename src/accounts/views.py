@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib import auth
-from .models import userProfile
+from .models import UserProfile
 import re
 
 # Create your views here.
@@ -14,6 +14,8 @@ def signin(request):
 
         user = auth.authenticate(username=username, password=password)
         if user is not None:
+            if 'rememberme' not in request.POST:
+                request.session.set_expiry(0)
             auth.login(request, user)
             #messages.info(request, "You are now logged in")
         else:
@@ -90,7 +92,7 @@ def signup(request):
                                  password=password)
                             user.save()
                             # Add new user profile
-                            userprofile = userProfile\
+                            userprofile = UserProfile\
                                 (user=user, address1=address1,
                                  address2=address2, city=city,
                                  state=state, zip_number=zip_number)
@@ -120,25 +122,68 @@ def signup(request):
             messages.error(request, 'Check empty fields')
 
         return render(request, "accounts/signup.html",{
-            'fname':fname,
-            'lname':lname,
-            'address1':address1,
-            'address2':address2,
-            'city':city,
-            'state':state,
+            'fname': fname,
+            'lname': lname,
+            'address1': address1,
+            'address2': address2,
+            'city': city,
+            'state': state,
             'zip': zip_number,
-            'email':email,
-            'username':username,
-            'password':password,
-            'is_added':is_added
+            'email': email,
+            'username': username,
+            'password': password,
+            'is_added': is_added
         })
     else:
         return render(request, "accounts/signup.html")
 
 
 def profile(request):
-    if request.method == 'POST' and 'btnprofile' in request.POST:
-        messages.info(request, "This is POST and btn")
+    if request.method == 'POST' and 'btnSave' in request.POST:
+        if request.user is not None and request.user.id != None:
+            userprofile = UserProfile.objects.get(user=request.user)
+            if request.POST['fname'] and request.POST['lname'] and request.POST['address1'] and request.POST['address2'] and\
+                request.POST['city'] and request.POST['state'] and request.POST['zip'] and request.POST['email'] and\
+                request.POST['username'] and request.POST['password']:
+                request.user.first_name = request.POST['fname']
+                request.user.last_name = request.POST['lname']
+                userprofile.address1 = request.POST['address1']
+                userprofile.address2 = request.POST['address2']
+                userprofile.city = request.POST['city']
+                userprofile.state = request.POST['state']
+                userprofile.zip_number = request.POST['zip']
+                #request.user.email = request.POST['email']
+                #request.user.username = request.POST['username']
+                if not request.POST['password'].startswith('pbkdf2_sha256$'):
+                    request.user.set_password(request.POST['password'])
+                request.user.save()
+                userprofile.save()
+                auth.login(request, request.user)
+                messages.success(request, 'your data has been saved')
+            else:
+                messages.error(request, 'Check your values and elements')
         return redirect('accounts:profile')
     else:
-        return render(request, "accounts/profile.html")
+        #if request.user.id == None: return redirect('pages:index')
+
+        if request.user is not None:
+            context = None
+            if not request.user.is_anonymous:
+                userprofile = UserProfile.objects.get(user=request.user)
+
+                context = {
+                    'fname': request.user.first_name,
+                    'lname': request.user.last_name,
+                    'address1': userprofile.address1,
+                    'address2': userprofile.address2,
+                    'city': userprofile.city,
+                    'state': userprofile.state,
+                    'zip': userprofile.zip_number,
+                    'email': request.user.email,
+                    'username': request.user.username,
+                    'password': request.user.password,
+                }
+            return render(request, "accounts/profile.html", context)
+        else:
+            return redirect('accounts:profile')
+
