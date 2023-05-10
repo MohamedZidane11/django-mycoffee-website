@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib import auth
 from .models import UserProfile
+from products.models import Product
 import re
 
 # Create your views here.
@@ -187,3 +188,17 @@ def profile(request):
         else:
             return redirect('accounts:profile')
 
+
+def product_favorite(request, pro_id):
+    if request.user.is_authenticated and not request.user.is_anonymous:
+        pro_fav = Product.objects.get(pk=pro_id)
+        if UserProfile.objects.filter(user=request.user, product_favorites=pro_fav).exists():
+            messages.warning(request, 'Product already exists in the favorite list')
+        else:
+            userprofile = UserProfile.objects.get(user=request.user)
+            userprofile.product_favorites.add(pro_fav)
+            messages.success(request, 'Product has been successfully added to your favorite list')
+    else:
+        messages.error(request, 'You must be logged in')
+
+    return redirect('/products/' + str(pro_id))
