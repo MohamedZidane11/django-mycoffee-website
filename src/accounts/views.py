@@ -202,3 +202,12 @@ def product_favorite(request, pro_id):
         messages.error(request, 'You must be logged in')
 
     return redirect('/products/' + str(pro_id))
+
+
+def show_product_favorite(request):
+    context = None
+    if request.user.is_authenticated and not request.user.is_anonymous:
+        userInfo = UserProfile.objects.get(user=request.user)
+        pro = userInfo.product_favorites.all()
+        context = {'products': pro}
+    return render(request, 'products/products.html', context)
