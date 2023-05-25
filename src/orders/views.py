@@ -38,3 +38,7 @@ def add_to_cart(request):
         return redirect('/products/' + request.GET['pro_id'])
     else:
         return redirect('products:products')
+
+
+def cart(request):
+    return render(request, 'orders/cart.html')
