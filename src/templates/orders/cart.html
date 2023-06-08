@@ -15,6 +15,10 @@
         </h5>
 {% elif order %}
         <h5>Full Name: <span class="my-num">{{order.user.first_name|add:' '|add:order.user.last_name}}</span>
+            <a href="{% url 'products:products' %}" class="btn btn-outline-warning float-right m-1">Continue Shopping</a>
+            <a href="{% url 'orders:payment' %}" class="btn btn-outline-secondary float-right m-1">Checkout</a>
+
+            <br><br>
             <hr>
             Order Number: <span class="my-num">{{order.id}}</span>
             with total: <span class="my-num">{{total}}$</span>
