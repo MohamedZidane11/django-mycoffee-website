@@ -23,7 +23,12 @@ def add_to_cart(request):
         if order:
             #messages.warning(request, 'يوجد طلب قديم')
             old_order = Order.objects.get(user=request.user, is_finished=False)
-            orderdetails = OrderDetails.objects.create(product=pro, order=old_order, price=pro.price, quantity=qty)
+            if OrderDetails.objects.all().filter(order=old_order, product=pro).exists():
+                orderdetails = OrderDetails.objects.get(order=old_order, product=pro)
+                orderdetails.quantity += int(qty)
+                orderdetails.save()
+            else:
+                orderdetails = OrderDetails.objects.create(product=pro, order=old_order, price=pro.price, quantity=qty)
             messages.success(request, 'Was added to cart for old order')
         else:
             #messages.info(request, 'سوف يتم عمل طلب جديد')
@@ -37,7 +42,11 @@ def add_to_cart(request):
 
         return redirect('/products/' + request.GET['pro_id'])
     else:
-        return redirect('products:products')
+        if 'pro_id' in request.GET:
+            messages.error(request, 'You must be logged in')
+            return redirect('/products/' + request.GET['pro_id'])
+        else:
+            return redirect('pages:index')
 
 
 def cart(request):

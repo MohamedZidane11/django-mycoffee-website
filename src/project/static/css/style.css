@@ -206,3 +206,17 @@ input[type=number]:focus,
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-weight: bold;
 }
+
+.my-num{
+  color: darkred;
+  font-weight: bold;
+  border: 1px solid #ffc107;
+  padding: 2px 10px;
+  border-radius: 50px;
+}
+
+footer{
+  position: relative;
+  bottom: -20%;
+  clear: both;
+}
