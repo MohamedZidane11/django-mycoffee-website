@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from products.models import Product
-from orders.models import Order
-from orders.models import OrderDetails
+from .models import Order
+from .models import OrderDetails
+from .models import Payment
 from django.utils import timezone
 
 # Create your views here.
@@ -91,20 +92,60 @@ def sub_qty(request, orderdetails_id):
             orderdetails.save()
     return redirect('orders:cart')
 
+
 def payment(request):
     context = None
+    ship_address = None
+    ship_phone = None
+    card_number = None
+    expire = None
+    security_code = None
+    is_added = None
 
-    if request.user.is_authenticated and not request.user.is_anonymous:
-        if Order.objects.all().filter(user=request.user, is_finished=False):
-            order = Order.objects.get(user=request.user, is_finished=False)
-            orderdetails = OrderDetails.objects.all().filter(order=order)
-            total = 0
-            for sub in orderdetails:
-                total += sub.price * sub.quantity
-            context = {
-                'order': order,
-                'orderdetails': orderdetails,
-                'total': total,
-            }
+    if request.method == 'POST' and 'btnpayment' in request.POST and 'ship_address' in request.POST and \
+            'ship_phone' in request.POST and 'card_number' in request.POST and 'expire' in request.POST and \
+            'security_code' in request.POST:
+        # Here Payment process after pressing 'Payment' button
+        ship_address = request.POST['ship_address']
+        ship_phone = request.POST['ship_phone']
+        card_number = request.POST['card_number']
+        expire = request.POST['expire']
+        security_code = request.POST['security_code']
+
+        if request.user.is_authenticated and not request.user.is_anonymous:
+            if Order.objects.all().filter(user=request.user, is_finished=False):
+                order = Order.objects.get(user=request.user, is_finished=False)
+                payment = Payment(order=order, shipment_address=ship_address, shipment_phone=ship_phone,
+                                  card_number=card_number, expire=expire, security_code=security_code)
+                payment.save()
+                order.is_finished = True
+                order.save()
+                is_added = True
+                messages.success(request, 'Your Order is finished')
+
+        context = {
+            'ship_address': ship_address,
+            'ship_phone': ship_phone,
+            'card_number': card_number,
+            'expire': expire,
+            'security_code': security_code,
+            'is_added': is_added,
+        }
+        pass
+    else:
+        # Here Display details before pressing 'Payment' button
+        if request.user.is_authenticated and not request.user.is_anonymous:
+            if Order.objects.all().filter(user=request.user, is_finished=False):
+                order = Order.objects.get(user=request.user, is_finished=False)
+                orderdetails = OrderDetails.objects.all().filter(order=order)
+                total = 0
+                for sub in orderdetails:
+                    total += sub.price * sub.quantity
+
+                context = {
+                    'order': order,
+                    'orderdetails': orderdetails,
+                    'total': total,
+                }
 
     return render(request, 'orders/payment.html', context)
