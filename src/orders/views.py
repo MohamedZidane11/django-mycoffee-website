@@ -52,6 +52,7 @@ def add_to_cart(request):
 
 def cart(request):
     context = None
+
     if request.user.is_authenticated and not request.user.is_anonymous:
         if Order.objects.all().filter(user=request.user, is_finished=False):
             order = Order.objects.get(user=request.user, is_finished=False)
@@ -149,3 +150,22 @@ def payment(request):
                 }
 
     return render(request, 'orders/payment.html', context)
+
+
+def show_orders(request):
+    context = None
+    all_orders = None
+
+    if request.user.is_authenticated and not request.user.is_anonymous:
+        all_orders = Order.objects.all().filter(user=request.user)
+        if all_orders:
+            order = Order.objects.get(user=request.user, is_finished=False)
+            orderdetails = OrderDetails.objects.all().filter(order=order)
+            total = 0
+            for sub in orderdetails:
+                total += sub.price * sub.quantity
+        context = {
+            'all_orders': all_orders,
+        }
+
+    return render(request, 'orders/show_orders.html', context)
